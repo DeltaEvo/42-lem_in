@@ -6,18 +6,18 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/30 10:00:57 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/03/20 08:28:18 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/03/20 09:41:21 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = lem_in
+NAME = lem-in
 
 BUILD_DIR = build
 OBJ_DIR = $(BUILD_DIR)/objs
 DEP_DIR = $(BUILD_DIR)/deps
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -Iinclude
+CFLAGS = -Wall -Wextra -Iinclude -g -fsanitize=address
 PRECOMPILE = @mkdir -p $(dir $@)
 POSTCOMPILE =
 

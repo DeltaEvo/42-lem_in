@@ -1,24 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lem_in.c                                           :+:      :+:    :+:   */
+/*   mem.h                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/03/20 11:31:38 by dde-jesu         ###   ########.fr       */
+/*   Created: 2019/03/20 09:16:01 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/03/20 09:19:16 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "reader.h"
-#include "lem_in.h"
+#ifndef MEM_H
+# define MEM_H
 
-struct s_anthil read_anthil(t_reader *r);
+# include <stddef.h>
 
-int	main(void)
-{
-	t_reader	r;
+void	*ft_memcpy(void *dst, const void *src, size_t n);
+void	*ft_realloc(void *o_ptr, size_t oldsize, size_t newsize);
 
-	r = io_create_reader(0);
-	read_anthil(&r);
-}
+#endif
