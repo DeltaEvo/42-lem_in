@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:49:09 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/03/20 10:08:17 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/26 15:18:43 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,5 +33,5 @@ ssize_t			io_read(t_reader *r, char data[], size_t len);
 int16_t			io_peek(t_reader *r);
 bool			io_expect(t_reader *r, const char *str);
 bool			io_skip_until(t_reader *r, char e);
-int32_t			io_readnum(t_reader *r);
+bool			io_readnum(t_reader *r, int32_t *num);
 #endif

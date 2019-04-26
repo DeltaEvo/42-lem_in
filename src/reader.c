@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:49:43 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/03/20 10:08:10 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/26 15:46:36 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,13 +91,14 @@ bool		io_skip_until(t_reader *r, char e)
 	}
 }
 
-int32_t		io_readnum(t_reader *r)
+bool		io_readnum(t_reader *r, int32_t *num)
 {
 	int16_t		c;
-	uint32_t	res;
+	uint64_t	res;
 	bool		sign;
 
 	res = 0;
+	sign = 0;
 	if ((c = io_peek(r)) == '-' || c == '+')
 	{
 		sign = c == '-';
@@ -106,8 +107,11 @@ int32_t		io_readnum(t_reader *r)
 	while ((c = io_peek(r)) >= '0' && c <= '9')
 	{
 		res = res * 10 + (c - '0');
+		if (res > ((uint64_t)INT32_MAX + sign))
+			return (false);
 		r->index++;
 	}
-	return (sign ? -res : res);
+	*num = sign ? -res : res;
+	return (true);
 }
 

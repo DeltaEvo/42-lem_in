@@ -6,13 +6,14 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/03/20 11:46:27 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/26 16:03:54 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include "reader.h"
 #include "str.h"
+#include "hashtable.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -26,12 +27,18 @@ enum	e_comment
 
 static bool	is_ws(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n');
+	return (c == ' ' || c == '\t');
 }
 
 static void	skip_ws(t_reader *r)
 {
 	while (is_ws(io_peek(r)))
+		r->index++;
+}
+
+static void	skip_nl(t_reader *r)
+{
+	while (io_peek(r) == '\n')
 		r->index++;
 }
 
@@ -42,7 +49,7 @@ char	*read_name(t_reader *r)
 
 	if (!str_init(&str, 8))
 		return (NULL);
-	while ((c = io_peek(r)) != -1 && !is_ws(c) && c != '-')
+	while ((c = io_peek(r)) != -1 && !is_ws(c) && c != '-' && c != '\n')
 	{
 		if (!str_append(&str, c))
 			return (NULL);
@@ -77,12 +84,17 @@ enum e_comment	read_comment(t_reader *r)
 void	 read_room_coords(t_reader *r, struct s_room *room)
 {
 	skip_ws(r);
-	room->x = io_readnum(r);
+	io_readnum(r, &room->x);
 	skip_ws(r);
-	room->y = io_readnum(r);
+	io_readnum(r, &room->y);
 }
 
-bool	read_object(t_reader *r, struct s_room **room)
+struct s_link {
+	char	*first;
+	char	*second;
+};
+
+bool	read_object(t_reader *r, struct s_room **room, struct s_link *link)
 {
 	char			*name;
 	int16_t			c;
@@ -102,7 +114,8 @@ bool	read_object(t_reader *r, struct s_room **room)
 	else if (c == '-')
 	{
 		r->index++;
-		printf("Link %s - %s\n", name, read_name(r));
+		link->first = name;
+		link->second = read_name(r);
 	}
 	else
 	{
@@ -112,31 +125,115 @@ bool	read_object(t_reader *r, struct s_room **room)
 	return (true);
 }
 
-struct s_anthil	read_anthil(t_reader *r)
+bool	link_anthil(struct s_hashtable *hashtable, struct s_link *link)
 {
-	struct s_anthil	anthil;
-	enum e_comment	comment;
+	struct s_entry		*first;
+	struct s_entry		*second;
+	struct s_room		**room;
+
+	if (!(first = hashtable_get(hashtable, link->first)))
+		warning("Room \"%s\" (first part) not found\n", link->first);
+	if (!(second = hashtable_get(hashtable, link->second)))
+		warning("Room \"%s\" (second part) not found\n", link->second);
+	if (!first || !second)
+		return (true);
+	if ((room = add_room(&((struct s_room *)first->value)->links)))
+		*room = second->value;
+	if ((room = add_room(&((struct s_room *)second->value)->links)))
+		*room = first->value;
+	return (true);
+}
+
+void	free_room(struct s_room *room)
+{
+	free(room->name);
+	free(room->links);
+	free(room);
+}
+
+void	free_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
+{
+	size_t			i;
 	struct s_room	*room;
 
-	anthil = (struct s_anthil) {
-		.start = NULL,
-		.end = NULL
-	};
+	i = 0; 
+	while (i < hashtable->size)
+	{
+		if (hashtable->bucket[i].key)
+		{
+			room = (struct s_room *)hashtable->bucket[i].value;
+			if (room != anthil->start && room->links->len == 0)
+			{
+				warning("Room \"%s\" has 0 links\n", room->name);
+				free_room(room);
+			}
+		}
+		i++;
+	}
+}
+
+struct s_anthil	read_anthil(t_reader *r)
+{
+	struct s_anthil		anthil;
+	enum e_comment		comment;
+	struct s_room		*room;
+	struct s_link		link;
+	struct s_hashtable	*hashtable;
+	struct s_entry		*entry;
+	bool				start;
+	bool				end;
+	int32_t				ants;
+
+	anthil.start = NULL;
+	while (read_comment(r) != COMMENT_NONE)
+		;
+	if (!io_readnum(r, &ants) || ants <= 0 || !io_expect(r, "\n"))
+	{
+		error("Invalid ant num\n");
+		return (anthil);
+	}
+	anthil.ants = ants;
+	hashtable = create_hashtable(1);
 	while (true)
 	{
-		skip_ws(r);
-		comment = read_comment(r);
+		skip_nl(r);
+		start = false;
+		end = false;
+		while ((comment = read_comment(r)) != COMMENT_NONE)
+			if (comment == COMMENT_START)
+				start = true;
+			else if (comment == COMMENT_END)
+				end = true;
 		room = NULL;
-		if (!read_object(r, &room))
+		if (!read_object(r, &room, &link))
 			break ;
 		if (room)
 		{
-			if (comment == COMMENT_START)
-				printf("Start ");
-			if (comment == COMMENT_END)
-				printf("End ");
-			printf("Room %s %d %d\n", room->name, room->x, room->y);
+			if (start)
+			{
+				if (anthil.start)
+					warning("Start redefined taking new value \"%s\" old was \"%s\"\n", room->name, anthil.start->name);
+				anthil.start = room;
+			}
+			if (end)
+				room->end = true;
+			room->links = create_vec(1);
+			if ((entry = hashtable_insert(&hashtable, create_entry(room->name))))
+				entry->value = room;
+			else if (hashtable_get(hashtable, room->name))
+			{
+				error("Duplicate room \"%s\"\n", room->name);
+				return (anthil);
+			}
+		}
+		else if (!link_anthil(hashtable, &link))
+			return (anthil);
+		if (!io_expect(r, "\n"))
+		{
+			error("Too much data\n");
+			return (anthil);
 		}
 	}
+	free_unused(&anthil, hashtable);
 	return (anthil);
 }
