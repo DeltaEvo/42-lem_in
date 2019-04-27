@@ -6,7 +6,7 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/30 10:00:57 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/03/20 09:41:21 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/04/27 10:42:27 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,7 @@ CFLAGS = -Wall -Wextra -Iinclude -g -fsanitize=address
 PRECOMPILE = @mkdir -p $(dir $@)
 POSTCOMPILE =
 
-ifdef DEPS
+ifndef NODEPS
 
 DEPFLAGS = -MT $@ -MMD -MP -MF $(DEP_DIR)/$*.Td
 CFLAGS += $(DEPFLAGS)

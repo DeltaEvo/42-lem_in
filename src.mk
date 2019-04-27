@@ -5,3 +5,4 @@ SRCS += src/parser.c
 SRCS += src/reader.c
 SRCS += src/str.c
 SRCS += src/vec.c
+SRCS += src/print.c

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:14:49 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/26 14:01:34 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/27 09:31:56 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,4 +49,37 @@ int		ft_strcmp(const char *s1, const char *s2)
 	while (s1[i] == s2[i] && s1[i] && s2[i])
 		i++;
 	return ((unsigned char)s1[i] - (unsigned char)s2[i]);
+}
+
+int		ft_memcmp(const void *s1, const void *s2, size_t n)
+{
+	const unsigned char *c_s1 = s1;
+	const unsigned char *c_s2 = s2;
+
+	if (n != 0)
+		while (n--)
+			if (*c_s1++ != *c_s2++)
+				return (*--c_s1 - *--c_s2);
+	return (0);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s)
+		if (*s++ == c)
+			return ((char *)s - 1);
+	if (c)
+		return (0);
+	else
+		return ((char *)s);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
 }

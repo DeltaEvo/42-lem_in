@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:08:09 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/26 14:21:25 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/27 10:09:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ struct s_room_vec 	*create_vec(size_t capacity)
 	return (vec);
 }
 
-struct s_room		**add_room(struct s_room_vec **vec)
+struct s_room_ptr	*add_room(struct s_room_vec **vec)
 {
 	size_t	new_capacity;
 

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/26 15:31:39 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/27 10:10:40 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,5 @@ int	main(void)
 		error("Start is end\n");
 		return (1);
 	}
-	printf("Ants: %zu\n", anthil.ants);
+	print_anthil(anthil);
 }
