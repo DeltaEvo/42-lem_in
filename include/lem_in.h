@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 16:09:14 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/28 17:12:38 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,15 +56,29 @@ struct	s_room_vec {
 	struct s_room_ptr	rooms[];
 };
 
+struct	s_path {
+	size_t				ants;
+	struct s_room_vec	*path;
+};
+
+struct	s_path_vec {
+	size_t			len;
+	size_t			capacity;
+	struct s_path	paths[];
+};
+
 struct	s_anthil {
 	char				*start_comments;
 	char				*end_comments;
 	size_t				ants;
 	struct s_room		*start;
+	struct s_path_vec	*paths;
 };
 
 struct s_room_ptr	*add_room(struct s_room_vec **vec);
-struct s_room_vec 	*create_vec(size_t capacity);
+struct s_path		*add_path(struct s_path_vec **vec);
+struct s_room_vec 	*create_room_vec(size_t capacity);
+struct s_path_vec 	*create_path_vec(size_t capacity);
 void				print_anthil(struct s_anthil anthil);
 
 #endif

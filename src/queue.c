@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 14:05:33 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 15:17:43 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/29 10:22:43 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,22 @@ bool			queue_empty(struct s_queue *queue)
 
 struct s_room	**queue_push(struct s_queue **queue)
 {
-	size_t			new_size;
 	struct s_room	**el;
+	struct s_queue	*new_queue;
+	size_t			i;
 
 	if ((*queue)->full)
 	{
-		new_size = (*queue)->size * 2;
-		*queue = ft_realloc(*queue,
-				sizeof(**queue) + (*queue)->size * sizeof(*(*queue)->rooms),
-				sizeof(**queue) + new_size * sizeof(*(*queue)->rooms));
-		if (!*queue)
+		if (!(new_queue = create_queue((*queue)->size * 2)))
 			return (NULL);
-		(*queue)->size = new_size;
+		i = 0;
+		while (i < (*queue)->size)
+		{
+			*queue_push(&new_queue) = (*queue)->rooms[((*queue)->head + i)
+				% (*queue)->size];
+			i++;
+		}
+		*queue = new_queue;
 	}
 	el = &(*queue)->rooms[(*queue)->head];
 	(*queue)->head = ((*queue)->head + 1) % (*queue)->size;

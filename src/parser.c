@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 15:45:31 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/01 10:22:19 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,6 +211,7 @@ struct s_anthil	read_anthil(t_reader *r)
 	char				*comments;
 
 	anthil.start = NULL;
+	anthil.paths = NULL;
 	anthil.start_comments = read_comments(r);
 	if (!io_readnum(r, &ants) || ants <= 0 || !io_expect(r, "\n"))
 	{
@@ -218,7 +219,7 @@ struct s_anthil	read_anthil(t_reader *r)
 		return (anthil);
 	}
 	anthil.ants = ants;
-	hashtable = create_hashtable(1);
+	hashtable = create_hashtable(1000);
 	while (true)
 	{
 		skip_nl(r);
@@ -237,9 +238,8 @@ struct s_anthil	read_anthil(t_reader *r)
 					warning("Start redefined taking new value \"%s\" old was \"%s\"\n", room->name, anthil.start->name);
 				anthil.start = room;
 			}
-			if (has_command(comments, "#end"))
-				room->end = true;
-			room->links = create_vec(1);
+			room->end = has_command(comments, "#end");
+			room->links = create_room_vec(1);
 			room->comments = comments;
 			room->mark = false;
 			room->broken = false;

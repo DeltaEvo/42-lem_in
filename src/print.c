@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/05/10 13:36:21 by dde-jesu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem_in.h"
 #include "mem.h"
 #include <unistd.h>
@@ -42,7 +54,9 @@ void	print_room(struct s_room *room)
 
 	room->mark = true;
 	print_comments(room->comments);
-	printf("%s %d %d\n", room->name, room->x, room->y);
+	write(STDOUT_FILENO, room->name, ft_strlen(room->name));
+	write(STDOUT_FILENO, " ", 1);
+	printf("%d %d\n", room->x, room->y);
 	fflush(stdout);
 	i = 0;
 	while (i < room->links->len)
@@ -87,8 +101,9 @@ void	print_anthil(struct s_anthil anthil)
 	fflush(stdout);
 	print_room(anthil.start);
 	unmark(anthil.start);
-	write(STDOUT_FILENO, "\n", 1);
+	//write(STDOUT_FILENO, "\n", 1);
 	print_links(anthil.start);
 	unmark(anthil.start);
 	print_comments(anthil.end_comments);
+	write(STDOUT_FILENO, "\n", 1);
 }
