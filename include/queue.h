@@ -1,37 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   lem_in.c                                           :+:      :+:    :+:   */
+/*   queue.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 15:27:43 by dde-jesu         ###   ########.fr       */
+/*   Created: 2019/04/27 14:03:25 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/04/28 15:26:06 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "reader.h"
+#ifndef QUEUE_H
+# define QUEUE_H
+
 #include "lem_in.h"
 
-struct s_anthil read_anthil(t_reader *r);
+struct	s_queue {
+	size_t			head;
+	size_t			tail;
+	bool			full;
+	size_t			size;
+	struct s_room	*rooms[];
+};
 
-int	main(void)
-{
-	t_reader		r;
-	struct s_anthil	anthil;
+struct s_queue 	*create_queue(size_t size);
+bool			queue_empty(struct s_queue *queue);
+struct s_room	**queue_push(struct s_queue **queue);
+struct s_room 	*queue_pop(struct s_queue *queue);
 
-	r = io_create_reader(0);
-	anthil = read_anthil(&r);
-	if (!anthil.start)
-	{
-		error("No start link\n");
-		return (1);
-	}
-	if (anthil.start->end)
-	{
-		error("Start is end\n");
-		return (1);
-	}
-	print_anthil(anthil);
-	find_all_paths(&anthil);
-}
+#endif

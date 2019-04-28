@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/27 10:42:52 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/28 15:45:31 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,6 +242,9 @@ struct s_anthil	read_anthil(t_reader *r)
 			room->links = create_vec(1);
 			room->comments = comments;
 			room->mark = false;
+			room->broken = false;
+			room->prev = NULL;
+			room->old_prev = NULL;
 			if ((entry = hashtable_insert(&hashtable, create_entry(room->name))))
 				entry->value = room;
 			else if (hashtable_get(hashtable, room->name))

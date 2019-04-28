@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/27 10:06:45 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/04/28 16:09:14 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@ struct	s_room {
 	bool				end;
 	struct s_room_vec	*links;
 	bool				mark;
+	bool				broken;
+	struct s_room		*prev;
+	struct s_room		*old_prev;
 };
 
 struct	s_room_ptr {

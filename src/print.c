@@ -7,6 +7,8 @@ void	unmark(struct s_room *room)
 	size_t	i;
 
 	room->mark = false;
+	room->broken = false;
+	room->prev = NULL;
 	i = 0;
 	while (i < room->links->len)
 	{
@@ -66,8 +68,14 @@ void	print_links(struct s_room *room)
 			write(STDOUT_FILENO, "-", 1);
 			write(STDOUT_FILENO, room->links->rooms[i].ptr->name, ft_strlen(room->links->rooms[i].ptr->name));
 			write(STDOUT_FILENO, "\n", 1);
-			print_links(room->links->rooms[i].ptr);
 		}
+		i++;
+	}
+	i = 0;
+	while (i < room->links->len)
+	{
+		if (!room->links->rooms[i].ptr->mark)
+			print_links(room->links->rooms[i].ptr);
 		i++;
 	}
 }
