@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 17:12:38 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/11 11:44:20 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,7 @@ struct	s_room {
 
 struct	s_room_ptr {
 	struct s_room	*ptr;
+	bool			first;
 	char			*comments;
 };
 

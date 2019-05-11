@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 16:37:29 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/01 10:20:10 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/11 17:55:44 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,13 +31,12 @@ struct s_room	*find_path(struct s_anthil *anthil)
 		room = queue_pop(queue);
 		if (room->end)
 			break ;
-		if (!room->old_prev || room->old_prev->broken)
+		if (!room->old_prev)
 		{
 			i = 0;
 			while (i < room->links->len)
 			{
-				if (!room->links->rooms[i].ptr->mark
-					&& room->links->rooms[i].ptr->old_prev != room)
+				if (!room->links->rooms[i].ptr->mark)
 				{
 					room->links->rooms[i].ptr->mark = true;
 					room->links->rooms[i].ptr->prev = room;
@@ -45,13 +44,6 @@ struct s_room	*find_path(struct s_anthil *anthil)
 				}
 				i++;
 			}
-		}
-		else if (!room->old_prev->mark)
-		{
-			room->old_prev->prev = room;
-			room->old_prev->mark = true;
-			room->old_prev->broken = true;
-			*queue_push(&queue) = room->old_prev;
 		}
 	}
 	free(queue);
@@ -141,7 +133,7 @@ void	find_all_paths(struct s_anthil *anthil)
 		while (room != anthil->start)
 		{
 			if (!room->broken)
-				room->old_prev = room->prev;
+				room->old_prev = 1;
 			room = room->prev;
 		}
 		unmark(anthil->start);

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/01 10:22:19 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/11 11:47:28 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,8 @@ bool	read_object(t_reader *r, struct s_room **room, struct s_link *link)
 	return (true);
 }
 
+#include <assert.h>
+
 bool	link_anthil(struct s_hashtable *hashtable, struct s_link *link, char *comments)
 {
 	struct s_entry		*first;
@@ -142,13 +144,19 @@ bool	link_anthil(struct s_hashtable *hashtable, struct s_link *link, char *comme
 	if ((room = add_room(&((struct s_room *)first->value)->links)))
 	{
 		room->ptr = second->value;
+		room->first = true;
 		room->comments = comments;
 	}
+	else
+		assert(false);
 	if ((room = add_room(&((struct s_room *)second->value)->links)))
 	{
 		room->ptr = first->value;
+		room->first = false;
 		room->comments = comments;
 	}
+	else
+		assert(false);
 	return (true);
 }
 

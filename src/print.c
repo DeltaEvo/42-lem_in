@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/10 13:36:21 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/11 17:09:32 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,15 @@ void	print_links(struct s_room *room)
 		if (!room->links->rooms[i].ptr->mark)
 		{
 			print_comments(room->links->rooms[i].comments);
-			write(STDOUT_FILENO, room->name, ft_strlen(room->name));
+			if (room->links->rooms[i].first)
+				write(STDOUT_FILENO, room->name, ft_strlen(room->name));
+			else
+				write(STDOUT_FILENO, room->links->rooms[i].ptr->name, ft_strlen(room->links->rooms[i].ptr->name));
 			write(STDOUT_FILENO, "-", 1);
-			write(STDOUT_FILENO, room->links->rooms[i].ptr->name, ft_strlen(room->links->rooms[i].ptr->name));
+			if (room->links->rooms[i].first)
+				write(STDOUT_FILENO, room->links->rooms[i].ptr->name, ft_strlen(room->links->rooms[i].ptr->name));
+			else
+				write(STDOUT_FILENO, room->name, ft_strlen(room->name));
 			write(STDOUT_FILENO, "\n", 1);
 		}
 		i++;
