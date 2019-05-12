@@ -6,14 +6,15 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 11:47:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/26 14:28:32 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/12 13:39:29 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef HASHTABLE_H
 # define HASHTABLE_H
 
-# include "lem_in.h"
+# include <stdint.h>
+# include <stddef.h>
 
 struct s_entry {
 	char		*key;

@@ -6,7 +6,7 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/30 10:00:57 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/05/11 17:33:37 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/05/12 13:38:01 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,6 +54,6 @@ fclean: clean
 
 re: fclean $(NAME)
 
-include $(wildcard $(DEP_DIR)/**/*.d)
+include $(wildcard $(DEP_DIR)/*.d)
 
 .PHONY: all clean fclean re

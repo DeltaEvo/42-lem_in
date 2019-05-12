@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/11 11:44:20 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/12 14:28:01 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,10 @@ struct	s_room {
 	char				*comments;
 	int32_t				x;
 	int32_t				y;
-	bool				end;
 	struct s_room_vec	*links;
 	bool				mark;
 	bool				broken;
+	size_t				depth;
 	struct s_room		*prev;
 	struct s_room		*old_prev;
 };
@@ -73,6 +73,7 @@ struct	s_anthil {
 	char				*end_comments;
 	size_t				ants;
 	struct s_room		*start;
+	struct s_room		*end;
 	struct s_path_vec	*paths;
 };
 

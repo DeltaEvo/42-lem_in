@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/11 17:44:35 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/12 13:37:21 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,18 +90,18 @@ int	main(void)
 		error("No start link\n");
 		return (1);
 	}
-	if (anthil.start->end)
+	if (anthil.start == anthil.end)
 	{
 		error("Start is end\n");
 		return (1);
 	}
-	print_anthil(anthil);
 	find_all_paths(&anthil);
 	if (!anthil.paths)
 	{
 		error("No paths found\n");
 		return (1);
 	}
+	print_anthil(anthil);
 	size_t turns = print_moves(&anthil);
 	fprintf(stderr, "Turns: %zu, Expected: %zd\n", turns, expected_turns(&anthil));
 	if (turns > expected_turns(&anthil))
