@@ -6,15 +6,16 @@
 /*   By: prastoin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 13:58:43 by prastoin          #+#    #+#             */
-/*   Updated: 2019/04/26 14:20:46 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 17:44:16 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "hashtable.h"
 #include "mem.h"
 #include <stdlib.h>
+#include <stdbool.h>
 
-static uint64_t	hash(const char *str)
+static uint64_t			hash(const char *str)
 {
 	uint64_t value;
 
@@ -52,14 +53,14 @@ struct s_hashtable		*create_hashtable(size_t size)
 	return (hash);
 }
 
-static void				grow_hashtable(struct s_hashtable **old)
+static bool				grow_hashtable(struct s_hashtable **old)
 {
 	struct s_hashtable	*table;
 	size_t				i;
 	struct s_entry		*entry;
 
-	// TODO error
-	table = create_hashtable((*old)->size * 2);
+	if (!(table = create_hashtable((*old)->size * 2)))
+		return (false);
 	i = 0;
 	while (i < (*old)->size)
 	{
@@ -70,6 +71,7 @@ static void				grow_hashtable(struct s_hashtable **old)
 	}
 	free(*old);
 	*old = table;
+	return (true);
 }
 
 struct s_entry			*hashtable_insert(struct s_hashtable **table,
@@ -92,14 +94,16 @@ struct s_entry			*hashtable_insert(struct s_hashtable **table,
 	}
 	if (j == (*table)->size / 2)
 	{
-		grow_hashtable(table);
+		if (!grow_hashtable(table))
+			return (NULL);
 		return (hashtable_insert(table, entry));
 	}
 	(*table)->bucket[i % (*table)->size] = entry;
 	return ((*table)->bucket + (i % (*table)->size));
 }
 
-struct s_entry	*hashtable_get(struct s_hashtable *table, const char *name)
+struct s_entry			*hashtable_get(struct s_hashtable *table,
+		const char *name)
 {
 	uint64_t				hash_name;
 	size_t					i;

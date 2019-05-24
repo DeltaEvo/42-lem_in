@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:28:56 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/27 09:30:06 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 16:50:37 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "mem.h"
 #include <stdlib.h>
 
-bool str_init(t_str *str, size_t capacity)
+bool	str_init(t_str *str, size_t capacity)
 {
 	char	*inner;
 

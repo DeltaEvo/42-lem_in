@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/12 14:28:01 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 17:26:47 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 # define warning(...) fprintf(stderr, WARNING __VA_ARGS__)
 # define error(...) fprintf(stderr, ERROR __VA_ARGS__)
 
-struct	s_room {
+struct				s_room {
 	char				*name;
 	char				*comments;
 	int32_t				x;
@@ -42,45 +42,51 @@ struct	s_room {
 	bool				broken;
 	size_t				depth;
 	struct s_room		*prev;
-	struct s_room		*old_prev;
+	struct s_room		*valid_prev;
 };
 
-struct	s_room_ptr {
+struct				s_room_ptr {
 	struct s_room	*ptr;
 	bool			first;
 	char			*comments;
 };
 
-struct	s_room_vec {
+struct				s_room_vec {
 	size_t				len;
 	size_t				capacity;
 	struct s_room_ptr	rooms[];
 };
 
-struct	s_path {
+struct				s_path {
 	size_t				ants;
 	struct s_room_vec	*path;
 };
 
-struct	s_path_vec {
+struct				s_path_vec {
 	size_t			len;
 	size_t			capacity;
 	struct s_path	paths[];
 };
 
-struct	s_anthil {
+struct				s_anthil {
 	char				*start_comments;
 	char				*end_comments;
-	size_t				ants;
+	int32_t				ants;
 	struct s_room		*start;
 	struct s_room		*end;
 	struct s_path_vec	*paths;
 };
 
+
+struct				s_link {
+	char			*first;
+	char			*second;
+};
+
 struct s_room_ptr	*add_room(struct s_room_vec **vec);
 struct s_path		*add_path(struct s_path_vec **vec);
-struct s_room_vec 	*create_room_vec(size_t capacity);
-struct s_path_vec 	*create_path_vec(size_t capacity);
+struct s_room_vec	*create_room_vec(size_t capacity);
+struct s_path_vec	*create_path_vec(size_t capacity);
 void				print_anthil(struct s_anthil anthil);
 
 #endif

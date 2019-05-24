@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:49:09 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/26 15:18:43 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 16:52:57 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,8 @@ typedef struct	s_reader
 }				t_reader;
 
 t_reader		io_create_reader(int fd);
-ssize_t			io_read(t_reader *r, char data[], size_t len);
 int16_t			io_peek(t_reader *r);
 bool			io_expect(t_reader *r, const char *str);
-bool			io_skip_until(t_reader *r, char e);
+//bool			io_skip_until(t_reader *r, char e);
 bool			io_readnum(t_reader *r, int32_t *num);
 #endif

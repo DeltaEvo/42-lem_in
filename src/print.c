@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/12 12:42:30 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 17:27:41 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	print_links(struct s_room *room)
 void	print_anthil(struct s_anthil anthil)
 {
 	print_comments(anthil.start_comments);
-	printf("%zu\n", anthil.ants);
+	printf("%d\n", anthil.ants);
 	fflush(stdout);
 	print_room(anthil.start);
 	unmark(anthil.start);

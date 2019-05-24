@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 14:05:33 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/29 10:22:43 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 16:48:30 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "mem.h"
 #include <stdlib.h>
 
-struct s_queue 	*create_queue(size_t size)
+struct s_queue	*create_queue(size_t size)
 {
 	struct s_queue	*queue;
 
@@ -59,7 +59,8 @@ struct s_room	**queue_push(struct s_queue **queue)
 	return (el);
 }
 
-struct s_room 	*queue_pop(struct s_queue *queue) {
+struct s_room	*queue_pop(struct s_queue *queue)
+{
 	struct s_room	*el;
 
 	if (queue_empty(queue))

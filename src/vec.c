@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:08:09 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/04/28 16:37:09 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 16:51:15 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "mem.h"
 #include <stdlib.h>
 
-struct s_room_vec 	*create_room_vec(size_t capacity)
+struct s_room_vec	*create_room_vec(size_t capacity)
 {
 	struct s_room_vec	*vec;
 
@@ -27,7 +27,7 @@ struct s_room_vec 	*create_room_vec(size_t capacity)
 	return (vec);
 }
 
-struct s_path_vec 	*create_path_vec(size_t capacity)
+struct s_path_vec	*create_path_vec(size_t capacity)
 {
 	struct s_path_vec	*vec;
 
@@ -57,7 +57,7 @@ struct s_room_ptr	*add_room(struct s_room_vec **vec)
 	return (*vec)->rooms + (*vec)->len++;
 }
 
-struct s_path	*add_path(struct s_path_vec **vec)
+struct s_path		*add_path(struct s_path_vec **vec)
 {
 	size_t	new_capacity;
 
@@ -73,4 +73,3 @@ struct s_path	*add_path(struct s_path_vec **vec)
 	}
 	return (*vec)->paths + (*vec)->len++;
 }
-

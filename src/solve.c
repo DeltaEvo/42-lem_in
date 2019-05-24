@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 16:37:29 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/12 14:28:53 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/13 13:25:03 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,15 @@ struct s_room	*find_path(struct s_anthil *anthil, size_t max_depth)
 		room = queue_pop(queue);
 		if (room == anthil->end)
 			break ;
-		/*if (room->depth >= max_depth)
-			continue ;*/
-		if (!room->old_prev || room->broken)
+		if (room->depth >= max_depth)
+			continue ;
+		if (!room->valid_prev || room->broken)
 		{
 			i = 0;
 			while (i < room->links->len)
 			{
 				if (!room->links->rooms[i].ptr->mark
-					&& room->links->rooms[i].ptr->old_prev != room)
+					&& room->links->rooms[i].ptr->valid_prev != room)
 				{
 					room->links->rooms[i].ptr->mark = true;
 					room->links->rooms[i].ptr->prev = room;
@@ -50,12 +50,12 @@ struct s_room	*find_path(struct s_anthil *anthil, size_t max_depth)
 				i++;
 			}
 		}
-		else if (!room->old_prev->mark)
+		else if (!room->valid_prev->mark)
 		{
-			room->old_prev->prev = room;
-			room->old_prev->mark = true;
-			room->old_prev->broken = true;
-			*queue_push(&queue) = room->old_prev;
+			room->valid_prev->prev = room;
+			room->valid_prev->mark = true;
+			room->valid_prev->broken = true;
+			*queue_push(&queue) = room->valid_prev;
 		}
 	}
 	free(queue);
@@ -81,8 +81,8 @@ void	print_path(struct s_room_vec *vec)
 
 void	collect_path(struct s_anthil *anthil, struct s_room_vec **vec, struct s_room *room)
 {
-	if (room->old_prev)
-		collect_path(anthil, vec, room->old_prev);
+	if (room->valid_prev)
+		collect_path(anthil, vec, room->valid_prev);
 	add_room(vec)->ptr = room;
 }
 
@@ -130,7 +130,7 @@ size_t	distribute_ants(struct s_anthil *anthil)
 			fprintf(stderr, "Ants in %zu: %zu (turns: %zu)\n", i, anthil->paths->paths[i].ants, anthil->paths->paths[i].ants + anthil->paths->paths[i].path->len - 2);
 		i++;
 	}
-	return (anthil->paths->paths[min].ants + anthil->paths->paths[min].path->len - 2);
+	return (anthil->paths->paths[min].ants + anthil->paths->paths[min].path->len - 3);
 }
 
 void	find_all_paths(struct s_anthil *anthil)
@@ -148,14 +148,14 @@ void	find_all_paths(struct s_anthil *anthil)
 		while (room != anthil->start)
 		{
 			if (!room->broken)
-				room->old_prev = room->prev;
+				room->valid_prev = room->prev;
 			room = room->prev;
 		}
 		i = 0;
 		anthil->paths = create_path_vec(10);
 		while (i < anthil->end->links->len)
 		{
-			if (anthil->end->links->rooms[i].ptr->old_prev)
+			if (anthil->end->links->rooms[i].ptr->valid_prev)
 			{
 				current = create_room_vec(10);
 				collect_path(anthil, &current, anthil->end->links->rooms[i].ptr);

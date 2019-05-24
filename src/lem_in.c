@@ -6,14 +6,13 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/12 13:37:21 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/24 17:21:59 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "parser.h"
 #include "reader.h"
 #include "lem_in.h"
-
-struct s_anthil read_anthil(t_reader *r);
 
 size_t	print_moves(struct s_anthil *anthil)
 {
@@ -84,7 +83,11 @@ int	main(void)
 	struct s_anthil	anthil;
 
 	r = io_create_reader(0);
-	anthil = read_anthil(&r);
+	anthil = (struct s_anthil) {
+		.paths = NULL,
+	};
+	if (!read_anthil(&r, &anthil))
+		return (1);
 	if (!anthil.start)
 	{
 		error("No start link\n");
