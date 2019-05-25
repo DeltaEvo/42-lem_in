@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/24 17:48:13 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/25 14:35:10 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -252,5 +252,5 @@ bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 		if (!io_expect(r, "\n"))
 			return (error("Too much data\n") && false);
 	}
-	return (free_unused(anthil, hashtable));
+	return (free_unused(anthil, table));
 }
