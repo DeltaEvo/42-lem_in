@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/24 17:21:59 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 10:20:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,6 @@ size_t	print_moves(struct s_anthil *anthil)
 		while (i < anthil->paths->len)
 		{
 			ants = anthil->paths->paths[i].ants;
-			/*if (turn == 1)
-			{
-				printf("%zu -> %zu (%zu)\n", i, ants, anthil->ants);
-			}*/
 			j = 0;
 			while (j < ants && j < turn)
 			{
@@ -47,7 +43,7 @@ size_t	print_moves(struct s_anthil *anthil)
 				}
 				if (moving)
 					printf(" ");
-				printf("L%zu-%s", ants_offset + j + 1, anthil->paths->paths[i].path->rooms[turn - j].ptr->name);
+				printf("L%zu-%s", ants_offset + j + 1, anthil->paths->paths[i].path->rooms[turn - j]->name);
 				moving = true;
 				j++;
 			}
@@ -84,7 +80,7 @@ int	main(void)
 
 	r = io_create_reader(0);
 	anthil = (struct s_anthil) {
-		.paths = NULL,
+		.start = NULL
 	};
 	if (!read_anthil(&r, &anthil))
 		return (1);

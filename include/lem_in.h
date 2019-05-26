@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/24 17:26:47 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 11:04:04 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,29 +32,42 @@
 # define warning(...) fprintf(stderr, WARNING __VA_ARGS__)
 # define error(...) fprintf(stderr, ERROR __VA_ARGS__)
 
+struct				s_link {
+	struct s_node	*ptr;
+	bool			first;
+	bool			virtual;
+	bool			usable;
+	char			*comments;
+};
+
+struct				s_link_vec {
+	size_t				len;
+	size_t				capacity;
+	struct s_link		elems[];
+};
+
+struct				s_node {
+	bool				in;
+	struct s_node		*prev;
+	size_t				depth;
+	struct s_link_vec	*links;
+};
+
 struct				s_room {
 	char				*name;
 	char				*comments;
 	int32_t				x;
 	int32_t				y;
-	struct s_room_vec	*links;
 	bool				mark;
-	bool				broken;
 	size_t				depth;
-	struct s_room		*prev;
-	struct s_room		*valid_prev;
-};
-
-struct				s_room_ptr {
-	struct s_room	*ptr;
-	bool			first;
-	char			*comments;
+	struct s_node		in;
+	struct s_node		out;
 };
 
 struct				s_room_vec {
-	size_t				len;
-	size_t				capacity;
-	struct s_room_ptr	rooms[];
+	size_t			len;
+	size_t			capacity;
+	struct s_room	*rooms[];
 };
 
 struct				s_path {
@@ -78,15 +91,17 @@ struct				s_anthil {
 };
 
 
-struct				s_link {
+struct				s_link_names {
 	char			*first;
 	char			*second;
 };
 
-struct s_room_ptr	*add_room(struct s_room_vec **vec);
+struct s_link		*add_link(struct s_link_vec **vec);
 struct s_path		*add_path(struct s_path_vec **vec);
-struct s_room_vec	*create_room_vec(size_t capacity);
+struct s_room		**add_room(struct s_room_vec **vec);
+struct s_link_vec	*create_link_vec(size_t capacity);
 struct s_path_vec	*create_path_vec(size_t capacity);
+struct s_room_vec	*create_room_vec(size_t capacity);
 void				print_anthil(struct s_anthil anthil);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/25 14:35:10 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 10:59:23 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,17 +82,36 @@ char	*read_comments(t_reader *r)
 
 void	init_and_read_room(t_reader *r, struct s_room *room, char *name)
 {
+	struct s_link		*link;
+
 	*room = (struct s_room) {
 		.name = name,
-		.links = create_room_vec(1),
+		.in = {
+			.in = true,
+			.links = create_link_vec(1),
+			.depth = SIZE_MAX
+		},
+		.out = {
+			.in = false,
+			.links = create_link_vec(1),
+			.depth = SIZE_MAX
+		}
 	};
+	if ((link = add_link(&room->in.links)))
+	{
+		link->comments = NULL;
+		link->first = false;
+		link->virtual = true;
+		link->usable = true;
+		link->ptr = &room->out;
+	}
 	skip_ws(r);
 	io_readnum(r, &room->x);
 	skip_ws(r);
 	io_readnum(r, &room->y);
 }
 
-bool	read_object(t_reader *r, struct s_room **room, struct s_link *link)
+bool	read_object(t_reader *r, struct s_room **room, struct s_link_names *link)
 {
 	char			*name;
 	int16_t			c;
@@ -121,36 +140,41 @@ bool	read_object(t_reader *r, struct s_room **room, struct s_link *link)
 	return (true);
 }
 
-bool	link_anthil(struct s_hashtable *hashtable, struct s_link *link,
+bool	link_anthil(struct s_hashtable *hashtable, struct s_link_names *links,
 		char *comments)
 {
 	struct s_entry		*first;
 	struct s_entry		*second;
-	struct s_room_ptr	*room;
+	struct s_link		*link;
 
-	if (!(first = hashtable_get(hashtable, link->first)))
-		warning("Room \"%s\" (first part) not found\n", link->first);
-	if (!(second = hashtable_get(hashtable, link->second)))
-		warning("Room \"%s\" (second part) not found\n", link->second);
+	if (!(first = hashtable_get(hashtable, links->first)))
+		warning("Room \"%s\" (first part) not found\n", links->first);
+	if (!(second = hashtable_get(hashtable, links->second)))
+		warning("Room \"%s\" (second part) not found\n", links->second);
 	if (!first || !second)
 		return (true);
-	if (!(room = add_room(&((struct s_room *)first->value)->links)))
+	if (!(link = add_link(&((struct s_room *)first->value)->out.links)))
 		return (false);
-	room->ptr = second->value;
-	room->first = true;
-	room->comments = comments;
-	if (!(room = add_room(&((struct s_room *)second->value)->links)))
+	link->ptr = &((struct s_room *)second->value)->in;
+	link->first = true;
+	link->virtual = false;
+	link->usable = true;
+	link->comments = comments;
+	if (!(link = add_link(&((struct s_room *)second->value)->out.links)))
 		return (false);
-	room->ptr = first->value;
-	room->first = false;
-	room->comments = comments;
+	link->ptr = &((struct s_room *)first->value)->in;
+	link->first = false;
+	link->virtual = false;
+	link->usable = true;
+	link->comments = comments;
 	return (true);
 }
 
 void	free_room(struct s_room *room)
 {
 	free(room->name);
-	free(room->links);
+	free(room->in.links);
+	free(room->out.links);
 	free(room);
 }
 
@@ -165,7 +189,7 @@ bool	free_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
 		if (hashtable->bucket[i].key)
 		{
 			room = (struct s_room *)hashtable->bucket[i].value;
-			if (room != anthil->start && room->links->len == 0)
+			if (room != anthil->start && room->out.links->len == 0)
 			{
 				warning("Room \"%s\" has 0 links\n", room->name);
 				free_room(room);
@@ -229,7 +253,7 @@ static bool		handle_room(struct s_hashtable **hashtable,
 bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 {
 	struct s_room		*room;
-	struct s_link		link;
+	struct s_link_names	link;
 	struct s_hashtable	*table;
 
 	anthil->start_comments = read_comments(r);

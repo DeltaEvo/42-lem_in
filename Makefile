@@ -6,7 +6,7 @@
 #    By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2018/11/30 10:00:57 by dde-jesu          #+#    #+#              #
-#    Updated: 2019/05/12 13:38:01 by dde-jesu         ###   ########.fr        #
+#    Updated: 2019/05/27 10:26:44 by dde-jesu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ OBJ_DIR = $(BUILD_DIR)/objs
 DEP_DIR = $(BUILD_DIR)/deps
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -g
+CFLAGS = -Wall -Wextra -Iinclude -g -fsanitize=address
 PRECOMPILE = @mkdir -p $(dir $@)
 POSTCOMPILE =
 

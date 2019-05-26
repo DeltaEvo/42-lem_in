@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 14:05:33 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/24 16:48:30 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/26 18:24:22 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ struct s_queue	*create_queue(size_t size)
 {
 	struct s_queue	*queue;
 
-	if (!(queue = malloc(sizeof(*queue) + size * sizeof(*queue->rooms))))
+	if (!(queue = malloc(sizeof(*queue) + size * sizeof(*queue->nodes))))
 		return (NULL);
 	*queue = (struct s_queue) {
 		.head = 0,
@@ -34,7 +34,7 @@ bool			queue_empty(struct s_queue *queue)
 	return (!queue->full && queue->head == queue->tail);
 }
 
-struct s_room	**queue_push(struct s_queue **queue)
+struct s_node	**queue_push(struct s_queue **queue)
 {
 	struct s_room	**el;
 	struct s_queue	*new_queue;
@@ -47,25 +47,25 @@ struct s_room	**queue_push(struct s_queue **queue)
 		i = 0;
 		while (i < (*queue)->size)
 		{
-			*queue_push(&new_queue) = (*queue)->rooms[((*queue)->head + i)
+			*queue_push(&new_queue) = (*queue)->nodes[((*queue)->head + i)
 				% (*queue)->size];
 			i++;
 		}
 		*queue = new_queue;
 	}
-	el = &(*queue)->rooms[(*queue)->head];
+	el = &(*queue)->nodes[(*queue)->head];
 	(*queue)->head = ((*queue)->head + 1) % (*queue)->size;
 	(*queue)->full = (*queue)->head == (*queue)->tail;
 	return (el);
 }
 
-struct s_room	*queue_pop(struct s_queue *queue)
+struct s_node	*queue_pop(struct s_queue *queue)
 {
-	struct s_room	*el;
+	struct s_node	*el;
 
 	if (queue_empty(queue))
 		return (NULL);
-	el = queue->rooms[queue->tail];
+	el = queue->nodes[queue->tail];
 	queue->full = false;
 	queue->tail = (queue->tail + 1) % queue->size;
 	return (el);

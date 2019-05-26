@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:08:09 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/24 16:51:15 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 10:21:45 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 #include "mem.h"
 #include <stdlib.h>
 
-struct s_room_vec	*create_room_vec(size_t capacity)
+struct s_link_vec	*create_link_vec(size_t capacity)
 {
-	struct s_room_vec	*vec;
+	struct s_link_vec	*vec;
 
-	if (!(vec = malloc(sizeof(*vec) + capacity * sizeof(*vec->rooms))))
+	if (!(vec = malloc(sizeof(*vec) + capacity * sizeof(*vec->elems))))
 		return (NULL);
-	*vec = (struct s_room_vec) {
+	*vec = (struct s_link_vec) {
 		.capacity = capacity,
 		.len = 0
 	};
@@ -40,7 +40,20 @@ struct s_path_vec	*create_path_vec(size_t capacity)
 	return (vec);
 }
 
-struct s_room_ptr	*add_room(struct s_room_vec **vec)
+struct s_room_vec	*create_room_vec(size_t capacity)
+{
+	struct s_room_vec	*vec;
+
+	if (!(vec = malloc(sizeof(*vec) + capacity * sizeof(*vec->rooms))))
+		return (NULL);
+	*vec = (struct s_room_vec) {
+		.capacity = capacity,
+		.len = 0
+	};
+	return (vec);
+}
+
+struct s_room	**add_room(struct s_room_vec **vec)
 {
 	size_t	new_capacity;
 
@@ -55,6 +68,23 @@ struct s_room_ptr	*add_room(struct s_room_vec **vec)
 		(*vec)->capacity = new_capacity;
 	}
 	return (*vec)->rooms + (*vec)->len++;
+}
+
+struct s_link	*add_link(struct s_link_vec **vec)
+{
+	size_t	new_capacity;
+
+	if ((*vec)->len == (*vec)->capacity)
+	{
+		new_capacity = (*vec)->capacity * 2;
+		*vec = ft_realloc(*vec,
+				sizeof(**vec) + (*vec)->capacity * sizeof(*(*vec)->elems),
+				sizeof(**vec) + new_capacity * sizeof(*(*vec)->elems));
+		if (!*vec)
+			return (NULL);
+		(*vec)->capacity = new_capacity;
+	}
+	return (*vec)->elems + (*vec)->len++;
 }
 
 struct s_path		*add_path(struct s_path_vec **vec)
