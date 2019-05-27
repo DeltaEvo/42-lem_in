@@ -17,7 +17,7 @@ OBJ_DIR = $(BUILD_DIR)/objs
 DEP_DIR = $(BUILD_DIR)/deps
 
 CC = gcc
-CFLAGS = -Wall -Wextra -Iinclude -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Iinclude -g
 PRECOMPILE = @mkdir -p $(dir $@)
 POSTCOMPILE =
 

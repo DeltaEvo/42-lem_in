@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:04:04 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 11:39:21 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ struct				s_link_vec {
 struct				s_node {
 	bool				in;
 	struct s_node		*prev;
-	size_t				depth;
 	struct s_link_vec	*links;
 };
 
@@ -59,7 +58,6 @@ struct				s_room {
 	int32_t				x;
 	int32_t				y;
 	bool				mark;
-	size_t				depth;
 	struct s_node		in;
 	struct s_node		out;
 };
@@ -71,7 +69,7 @@ struct				s_room_vec {
 };
 
 struct				s_path {
-	size_t				ants;
+	int32_t				ants;
 	struct s_room_vec	*path;
 };
 
@@ -88,6 +86,7 @@ struct				s_anthil {
 	struct s_room		*start;
 	struct s_room		*end;
 	struct s_path_vec	*paths;
+	struct s_room_vec	*rooms;
 };
 
 
@@ -102,6 +101,12 @@ struct s_room		**add_room(struct s_room_vec **vec);
 struct s_link_vec	*create_link_vec(size_t capacity);
 struct s_path_vec	*create_path_vec(size_t capacity);
 struct s_room_vec	*create_room_vec(size_t capacity);
-void				print_anthil(struct s_anthil anthil);
+void				print_anthil(struct s_anthil *anthil);
+struct s_room		*get_room(struct s_node *node);
+void				unmark(struct s_room *room);
+bool				free_room(struct s_room *room);
+void				free_anthil(struct s_anthil *anthil);
+void				free_paths(struct s_path_vec *paths);
+bool				ffree(void *ptr);
 
 #endif

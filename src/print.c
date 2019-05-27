@@ -6,37 +6,13 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 10:47:51 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 11:38:51 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include "mem.h"
 #include <unistd.h>
-
-struct s_room	*get_room(struct s_node *node)
-{
-	if (node->in)
-		return ((struct s_room *)((char *)node - (char *)&((struct s_room *)0)->in));
-	else
-		return ((struct s_room *)((char *)node - (char *)&((struct s_room *)0)->out));
-}
-
-void	unmark(struct s_room *room)
-{
-	size_t	i;
-
-	room->mark = false;
-	room->out.prev = NULL;
-	room->in.prev = NULL;
-	i = 0;
-	while (i < room->out.links->len)
-	{
-		if (get_room(room->out.links->elems[i].ptr)->mark)
-			unmark(get_room(room->out.links->elems[i].ptr));
-		i++;
-	}
-}
 
 void	print_comments(const char *comments)
 {
@@ -108,16 +84,16 @@ void	print_links(struct s_room *room)
 	}
 }
 
-void	print_anthil(struct s_anthil anthil)
+void	print_anthil(struct s_anthil *anthil)
 {
-	print_comments(anthil.start_comments);
-	printf("%d\n", anthil.ants);
+	print_comments(anthil->start_comments);
+	printf("%d\n", anthil->ants);
 	fflush(stdout);
-	print_room(anthil.start);
-	unmark(anthil.start);
+	print_room(anthil->start);
+	unmark(anthil->start);
 	//write(STDOUT_FILENO, "\n", 1);
-	print_links(anthil.start);
-	unmark(anthil.start);
-	print_comments(anthil.end_comments);
+	print_links(anthil->start);
+	unmark(anthil->start);
+	print_comments(anthil->end_comments);
 	write(STDOUT_FILENO, "\n", 1);
 }

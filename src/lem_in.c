@@ -73,40 +73,57 @@ ssize_t	expected_turns(struct s_anthil *anthil)
 		return (-1);
 }
 
-int	main(void)
+int	run(struct s_anthil *anthil)
 {
-	t_reader		r;
-	struct s_anthil	anthil;
-
-	r = io_create_reader(0);
-	anthil = (struct s_anthil) {
-		.start = NULL
-	};
-	if (!read_anthil(&r, &anthil))
-		return (1);
-	if (!anthil.start)
+	if (!anthil->start)
 	{
 		error("No start link\n");
 		return (1);
 	}
-	if (anthil.start == anthil.end)
+	if (!anthil->end)
+	{
+		error("No end link\n");
+		return (1);
+	}
+	if (anthil->start == anthil->end)
 	{
 		error("Start is end\n");
 		return (1);
 	}
-	find_all_paths(&anthil);
-	if (!anthil.paths)
+	find_all_paths(anthil);
+	if (!anthil->paths)
 	{
 		error("No paths found\n");
 		return (1);
 	}
 	print_anthil(anthil);
-	size_t turns = print_moves(&anthil);
-	fprintf(stderr, "Turns: %zu, Expected: %zd\n", turns, expected_turns(&anthil));
-	if (turns > expected_turns(&anthil))
+	size_t turns = print_moves(anthil);
+	fprintf(stderr, "Turns: %zu, Expected: %zd\n", turns, expected_turns(anthil));
+	if (turns > expected_turns(anthil))
 	{
 		fprintf(stderr, "\33[31mMore than expected\n\33[0m");
 		return (1);
 	}
+	return (0);
+}
+
+int	main(void)
+{
+	t_reader		r;
+	struct s_anthil	anthil;
+	int			ret;
+
+	r = io_create_reader(0);
+	anthil = (struct s_anthil) {
+		.rooms = create_room_vec(16)
+	};
+	if (!anthil.rooms)
+		return (1);
+	if (read_anthil(&r, &anthil))
+		ret = run(&anthil);
+	else
+		ret = 1;
+	free_anthil(&anthil);
+	return (ret);
 }
 

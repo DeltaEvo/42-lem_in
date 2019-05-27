@@ -8,3 +8,5 @@ SRCS += src/reader.c
 SRCS += src/solve.c
 SRCS += src/str.c
 SRCS += src/vec.c
+SRCS += src/room.c
+SRCS += src/free.c

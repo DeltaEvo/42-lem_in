@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 10:59:23 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/27 11:30:44 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ char	*read_comments(t_reader *r)
 		while ((c = io_peek(r)) != -1)
 		{
 			if (!str_append(&str, c))
-				return (NULL);
+				return ((void *)ffree(str.inner));
 			r->index++;
 			if (c == '\n')
 			{
@@ -89,12 +89,10 @@ void	init_and_read_room(t_reader *r, struct s_room *room, char *name)
 		.in = {
 			.in = true,
 			.links = create_link_vec(1),
-			.depth = SIZE_MAX
 		},
 		.out = {
 			.in = false,
 			.links = create_link_vec(1),
-			.depth = SIZE_MAX
 		}
 	};
 	if ((link = add_link(&room->in.links)))
@@ -141,16 +139,20 @@ bool	read_object(t_reader *r, struct s_room **room, struct s_link_names *link)
 }
 
 bool	link_anthil(struct s_hashtable *hashtable, struct s_link_names *links,
-		char *comments)
+		char **o_comments)
 {
+	const char			*comments = *o_comments;
 	struct s_entry		*first;
 	struct s_entry		*second;
 	struct s_link		*link;
 
+	*o_comments = NULL;
 	if (!(first = hashtable_get(hashtable, links->first)))
 		warning("Room \"%s\" (first part) not found\n", links->first);
 	if (!(second = hashtable_get(hashtable, links->second)))
 		warning("Room \"%s\" (second part) not found\n", links->second);
+	free(links->first);
+	free(links->second);
 	if (!first || !second)
 		return (true);
 	if (!(link = add_link(&((struct s_room *)first->value)->out.links)))
@@ -170,15 +172,7 @@ bool	link_anthil(struct s_hashtable *hashtable, struct s_link_names *links,
 	return (true);
 }
 
-void	free_room(struct s_room *room)
-{
-	free(room->name);
-	free(room->in.links);
-	free(room->out.links);
-	free(room);
-}
-
-bool	free_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
+bool	free_and_warn_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
 {
 	size_t			i;
 	struct s_room	*room;
@@ -190,10 +184,7 @@ bool	free_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
 		{
 			room = (struct s_room *)hashtable->bucket[i].value;
 			if (room != anthil->start && room->out.links->len == 0)
-			{
 				warning("Room \"%s\" has 0 links\n", room->name);
-				free_room(room);
-			}
 		}
 		i++;
 	}
@@ -222,19 +213,21 @@ bool	has_command(const char *comments, const char *command)
 }
 
 static bool		handle_room(struct s_hashtable **hashtable,
-		struct s_anthil *anthil, struct s_room *room, char *comments)
+		struct s_anthil *anthil, struct s_room *room, char **comments)
 {
 	struct s_entry		*entry;
+	struct s_room		**ptr;
 
-	room->comments = comments;
-	if (has_command(comments, "#start"))
+	room->comments = *comments;
+	*comments = NULL;
+	if (has_command(room->comments, "#start"))
 	{
 		if (anthil->start)
 			warning("Start redefined taking new value \"%s\" old was \"%s\"\n",
 					room->name, anthil->start->name);
 		anthil->start = room;
 	}
-	if (has_command(comments, "#end"))
+	if (has_command(room->comments, "#end"))
 	{
 		if (anthil->end)
 			warning("End redefined taking new value \"%s\" old was \"%s\"\n",
@@ -242,11 +235,11 @@ static bool		handle_room(struct s_hashtable **hashtable,
 		anthil->end = room;
 	}
 	if (!(entry = hashtable_insert(hashtable, create_entry(room->name))))
-	{
-		error("Duplicate room \"%s\"\n", room->name);
-		return (false);
-	}
+		return (error("Duplicate room \"%s\"\n", room->name) && free_room(room));
 	entry->value = room;
+	if (!(ptr = add_room(&anthil->rooms)))
+		return (free_room(room));
+	*ptr = room;
 	return (true);
 }
 
@@ -257,7 +250,7 @@ bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 	struct s_hashtable	*table;
 
 	anthil->start_comments = read_comments(r);
-	if (!io_readnum(r, &anthil->ants) || &anthil->ants <= 0
+	if (!io_readnum(r, &anthil->ants) || anthil->ants <= 0
 			|| !io_expect(r, "\n"))
 		return (error("Invalid ant num\n") && false);
 	if (!(table = create_hashtable(10)))
@@ -269,12 +262,12 @@ bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 		room = NULL;
 		if (!read_object(r, &room, &link))
 			break ;
-		if (room && !handle_room(&table, anthil, room, anthil->end_comments))
-			return (false);
-		if (!room && !link_anthil(table, &link, anthil->end_comments))
-			return (error("Malloc\n") && false);
+		if (room && !handle_room(&table, anthil, room, &anthil->end_comments))
+			return (ffree(table));
+		if (!room && !link_anthil(table, &link, &anthil->end_comments))
+			return (error("Malloc\n") && ffree(table));
 		if (!io_expect(r, "\n"))
-			return (error("Too much data\n") && false);
+			return (error("Too much data\n") && ffree(table));
 	}
-	return (free_unused(anthil, table));
+	return (free_and_warn_unused(anthil, table));
 }

@@ -51,6 +51,7 @@ struct s_node	**queue_push(struct s_queue **queue)
 				% (*queue)->size];
 			i++;
 		}
+		free(*queue);
 		*queue = new_queue;
 	}
 	el = &(*queue)->nodes[(*queue)->head];
