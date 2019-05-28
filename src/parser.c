@@ -88,11 +88,11 @@ void	init_and_read_room(t_reader *r, struct s_room *room, char *name)
 		.name = name,
 		.in = {
 			.in = true,
-			.links = create_link_vec(1),
+			.links = create_link_vec(1)
 		},
 		.out = {
 			.in = false,
-			.links = create_link_vec(1),
+			.links = create_link_vec(1)
 		}
 	};
 	if ((link = add_link(&room->in.links)))
@@ -117,6 +117,12 @@ bool	read_object(t_reader *r, struct s_room **room, struct s_link_names *link)
 	name = read_name(r);
 	if (is_ws(c = io_peek(r)))
 	{
+		if (*name == 'L')
+		{
+			error("Room %s start with an illegal character: L\n", name);
+			free(name);
+			return (false);
+		}
 		if (!(*room = malloc(sizeof(**room))))
 		{
 			free(name);
@@ -183,7 +189,7 @@ bool	free_and_warn_unused(struct s_anthil *anthil, struct s_hashtable *hashtable
 		if (hashtable->bucket[i].key)
 		{
 			room = (struct s_room *)hashtable->bucket[i].value;
-			if (room != anthil->start && room->out.links->len == 0)
+			if (room->out.links->len == 0)
 				warning("Room \"%s\" has 0 links\n", room->name);
 		}
 		i++;
@@ -259,9 +265,11 @@ bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 	{
 		skip_nl(r);
 		anthil->end_comments = read_comments(r);
+		if (io_peek(r) == -1)
+			break ;
 		room = NULL;
 		if (!read_object(r, &room, &link))
-			break ;
+			return (ffree(table));
 		if (room && !handle_room(&table, anthil, room, &anthil->end_comments))
 			return (ffree(table));
 		if (!room && !link_anthil(table, &link, &anthil->end_comments))
