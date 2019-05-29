@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 05:58:15 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 06:08:34 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,8 @@
 # define WARN_NOT_FOUND_PRE WARNING "Room \""
 # define WARN_NOT_FOUND_POST " not found\n"
 # define WARN_REDEFINED_1 " redefined taking new value \""
-# define WARN_REDEFINED_2 "\" old was \"" 
-# define WARN_REDEFINED_3 "\"\n" 
+# define WARN_REDEFINED_2 "\" old was \""
+# define WARN_REDEFINED_3 "\"\n"
 # define WARN_0_LINKS_PRE WARNING "Room \""
 # define WARN_0_LINKS_POST "\" has 0 links \n"
 
@@ -108,13 +108,12 @@ struct				s_anthil {
 	struct s_room_vec	*rooms;
 };
 
-
 struct				s_link_names {
 	char			*first;
 	char			*second;
 };
 
-void    			find_all_paths(struct s_anthil *anthil);
+void				find_all_paths(struct s_anthil *anthil);
 void				print_anthil(struct s_anthil *anthil);
 void				unmark(struct s_room *room);
 struct s_link		*add_link(struct s_link_vec **vec);

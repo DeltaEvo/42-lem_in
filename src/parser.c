@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 05:59:26 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 06:09:01 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,8 @@ static bool		read_object(t_reader *r, struct s_room **room,
 	return (true);
 }
 
-static bool		link_anthil(struct s_hashtable *hashtable, struct s_link_names *links,
-		char **o_comments, struct s_link *link)
+static bool		link_anthil(struct s_hashtable *hashtable,
+		struct s_link_names *links, char **o_comments, struct s_link *link)
 {
 	const char			*comments = *o_comments;
 	struct s_entry		*first;
@@ -103,7 +103,6 @@ static bool		link_anthil(struct s_hashtable *hashtable, struct s_link_names *lin
 	};
 	return (true);
 }
-
 
 static bool		handle_room(struct s_hashtable **hashtable,
 		struct s_anthil *anthil, struct s_room *room, char **comments)
