@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:28:56 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:44:07 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 03:41:31 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,15 +31,27 @@ bool	str_init(t_str *str, size_t capacity)
 bool	str_append(t_str *str, char c)
 {
 	size_t	new_capacity;
+	char	*new;
 
 	if (str->len == str->capacity)
 	{
 		new_capacity = str->capacity * 2;
-		str->inner = ft_realloc(str->inner, str->capacity, new_capacity);
-		if (!str->inner)
+		new = ft_realloc(str->inner, str->capacity, new_capacity);
+		if (!new)
 			return (false);
+		str->inner = new;
 		str->capacity = new_capacity;
 	}
 	str->inner[str->len++] = c;
 	return (true);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	size_t	len;
+
+	len = 0;
+	while (s[len])
+		len++;
+	return (len);
 }

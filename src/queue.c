@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/27 14:05:33 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/26 18:24:22 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:23:22 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ bool			queue_empty(struct s_queue *queue)
 
 struct s_node	**queue_push(struct s_queue **queue)
 {
-	struct s_room	**el;
+	struct s_node	**el;
 	struct s_queue	*new_queue;
 	size_t			i;
 

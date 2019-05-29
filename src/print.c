@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:38:51 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:43:01 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,8 +40,9 @@ void	print_room(struct s_room *room)
 	print_comments(room->comments);
 	write(STDOUT_FILENO, room->name, ft_strlen(room->name));
 	write(STDOUT_FILENO, " ", 1);
-	printf("%d %d\n", room->x, room->y);
-	fflush(stdout);
+	putnbr_fd(STDOUT_FILENO, room->x);
+	write(STDOUT_FILENO, " ", 1);
+	putnbr_fd(STDOUT_FILENO, room->y);
 	i = 0;
 	while (i < room->out.links->len)
 	{
@@ -87,11 +88,9 @@ void	print_links(struct s_room *room)
 void	print_anthil(struct s_anthil *anthil)
 {
 	print_comments(anthil->start_comments);
-	printf("%d\n", anthil->ants);
-	fflush(stdout);
+	putnbr_fd(STDOUT_FILENO, anthil->ants);
 	print_room(anthil->start);
 	unmark(anthil->start);
-	//write(STDOUT_FILENO, "\n", 1);
 	print_links(anthil->start);
 	unmark(anthil->start);
 	print_comments(anthil->end_comments);

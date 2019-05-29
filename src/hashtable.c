@@ -6,7 +6,7 @@
 /*   By: prastoin <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 13:58:43 by prastoin          #+#    #+#             */
-/*   Updated: 2019/05/24 17:44:16 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 03:40:04 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,6 @@ struct s_entry			create_entry(char *key)
 		.key = key,
 		.hash = hash(key)
 	});
-}
-
-struct s_hashtable		*create_hashtable(size_t size)
-{
-	struct s_hashtable	*hash;
-	size_t				i;
-
-	if (!(hash = malloc(sizeof(*hash) + size * sizeof(*hash->bucket))))
-		return (NULL);
-	i = 0;
-	while (i < size)
-	{
-		hash->bucket[i].key = NULL;
-		i++;
-	}
-	hash->size = size;
-	return (hash);
 }
 
 static bool				grow_hashtable(struct s_hashtable **old)

@@ -10,3 +10,7 @@ SRCS += src/str.c
 SRCS += src/vec.c
 SRCS += src/room.c
 SRCS += src/free.c
+SRCS += src/error.c
+SRCS += src/create.c
+SRCS += src/print_moves.c
+SRCS += src/expected.c

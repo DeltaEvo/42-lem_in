@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:39:21 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:44:57 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,15 @@
 
 # define WARNING CSI_YELLOW "Warning: " CSI_RESET
 # define ERROR CSI_RED "Error: " CSI_RESET
+
+# define ERROR_MALLOC ERROR "Error malloc\n"
+# define ERROR_NO_START ERROR "No start link\n"
+# define ERROR_NO_END ERROR "No end link\n"
+# define ERROR_START_END ERROR "Start is end\n"
+# define ERROR_NO_PATH ERROR "No paths found\n"
+
+# define GENERATOR_COMMENT "Here is the number of lines required: "
+# define MORE_ANTS CSI_RED "More than expected\n" CSI_RESET
 
 # include <stdio.h>
 # define warning(...) fprintf(stderr, WARNING __VA_ARGS__)
@@ -95,18 +104,24 @@ struct				s_link_names {
 	char			*second;
 };
 
+void    			find_all_paths(struct s_anthil *anthil);
+void				print_anthil(struct s_anthil *anthil);
+void				unmark(struct s_room *room);
 struct s_link		*add_link(struct s_link_vec **vec);
 struct s_path		*add_path(struct s_path_vec **vec);
 struct s_room		**add_room(struct s_room_vec **vec);
 struct s_link_vec	*create_link_vec(size_t capacity);
 struct s_path_vec	*create_path_vec(size_t capacity);
 struct s_room_vec	*create_room_vec(size_t capacity);
-void				print_anthil(struct s_anthil *anthil);
 struct s_room		*get_room(struct s_node *node);
-void				unmark(struct s_room *room);
 bool				free_room(struct s_room *room);
 void				free_anthil(struct s_anthil *anthil);
-void				free_paths(struct s_path_vec *paths);
+void				*free_paths(struct s_path_vec *paths);
 bool				ffree(void *ptr);
+void				*error_malloc(void *ptr);
+size_t				print_moves(struct s_anthil *anthil);
+void				print_move(size_t ant, char *name);
+int					check_expected(struct s_anthil *anthil, ssize_t turns);
+void				putnbr_fd(int fd, intmax_t n);
 
 #endif

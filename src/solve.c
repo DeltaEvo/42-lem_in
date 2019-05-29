@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 16:37:29 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 12:13:52 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:26:09 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,70 +29,68 @@ struct s_link		*get_link(struct s_node *from, struct s_node *to)
 	return (NULL);
 }
 
-#include <assert.h>
-
 bool	find_path(struct s_anthil *anthil)
 {
-	struct s_queue 	*queue;
+	struct s_queue	*queue;
+	struct s_node	**entry;
 	struct s_node	*node;
 	size_t			i;
 
-	queue = create_queue(16);
-	*queue_push(&queue) = &anthil->start->out;
+	if (!(queue = create_queue(16)))
+		return (false);
+	if ((entry = queue_push(&queue)))
+		*entry = &anthil->start->out;
 	anthil->start->out.prev = &anthil->start->in;
 	while (!queue_empty(queue) && (node = queue_pop(queue)) != &anthil->end->in)
 	{
-		i = 0;
-		while (i < node->links->len)
-		{
+		i = -1;
+		while (++i < node->links->len)
 			if (!node->links->elems[i].ptr->prev
 					&& node->links->elems[i].usable)
 			{
 				node->links->elems[i].ptr->prev = node;
 				get_room(node->links->elems[i].ptr)->mark = true;
-				*queue_push(&queue) = node->links->elems[i].ptr;
+				if ((entry = queue_push(&queue)))
+					*entry = node->links->elems[i].ptr;
 			}
-			i++;
-		}
 	}
 	free(queue);
 	return (anthil->end->in.prev != NULL);
 }
 
-void	collect_path(struct s_anthil *anthil, struct s_room_vec **vec,
+bool	collect_path(struct s_anthil *anthil, struct s_room_vec **vec,
 		struct s_node *node)
 {
-	size_t	i;
+	size_t			i;
+	struct s_room	**room;
 
-	assert(node->in);
-	*add_room(vec) = anthil->start;
-	*add_room(vec) = get_room(node);
+	if (!(room = add_room(vec)))
+		return (false);
+	*room = anthil->start;
+	if (!(room = add_room(vec)))
+		return (false);
+	*room = get_room(node);
 	node = node->links->elems[0].ptr;
 	while (node != &anthil->end->out)
 	{
-		i = 0;
-		while (i < node->links->len)
-		{
+		i = -1;
+		while (++i < node->links->len)
 			if (!node->links->elems[i].virtual && !node->links->elems[i].usable)
 			{
 				node = node->links->elems[i].ptr;
-				assert(node->in);
 				node = node->links->elems[0].ptr;
-				assert(!node->in);
-				*add_room(vec) = get_room(node);
+				if (!(room = add_room(vec)))
+					return (false);
+				*room = get_room(node);
 				break ;
 			}
-			i++;
-			assert(i < node->links->len);
-		}
 	}
+	return (true);
 }
 
-size_t	distribute_ants(struct s_anthil *anthil, struct s_path_vec *paths)
+size_t	get_shortest_path(struct s_path_vec *paths)
 {
 	size_t	i;
-	size_t	diff;
-	int32_t	ants;
 	size_t	min;
 	size_t	min_val;
 
@@ -106,9 +104,19 @@ size_t	distribute_ants(struct s_anthil *anthil, struct s_path_vec *paths)
 			min = i;
 			min_val = paths->paths[i].path->len;
 		}
-		paths->paths[i].ants = 0;
 		i++;
 	}
+	return (min);
+}
+
+size_t	distribute_ants(struct s_anthil *anthil, struct s_path_vec *paths)
+{
+	size_t	i;
+	int32_t	diff;
+	int32_t	ants;
+	size_t	min;
+
+	min = get_shortest_path(paths);
 	ants = anthil->ants;
 	while (ants)
 	{
@@ -160,27 +168,25 @@ struct s_path_vec	*get_paths(struct s_anthil *anthil)
 	struct s_room_vec	*current;
 	size_t				i;
 
-	paths = create_path_vec(10);
-	i = 0;
-	while (i < anthil->start->out.links->len)
-	{
+	if (!(paths = create_path_vec(10)))
+		return (NULL);
+	i = -1;
+	while (++i < anthil->start->out.links->len)
 		if (!anthil->start->out.links->elems[i].usable)
 		{
-			current = create_room_vec(10);
-			collect_path(anthil, &current,
-					anthil->start->out.links->elems[i].ptr);
+			if (!(current = create_room_vec(10)))
+				return (free_paths(paths));
+			if (!collect_path(anthil, &current,
+						anthil->start->out.links->elems[i].ptr))
+				return ((void*)(uint64_t)(free_paths(paths) || ffree(current)));
 			if ((path = add_path(&paths)))
 				*path = (struct s_path) {
 					.ants = 0,
 					.path = current
 				};
 			else
-			{
-				// TODO
-			}
+				return (free_paths(paths));
 		}
-		i++;
-	}
 	return (paths);
 }
 
@@ -194,7 +200,8 @@ void	find_all_paths(struct s_anthil *anthil)
 	while (find_path(anthil))
 	{
 		toggle_usability(anthil);
-		paths = get_paths(anthil);
+		if (!(paths = get_paths(anthil)))
+			break ;
 		if ((max = distribute_ants(anthil, paths)) < last_max)
 		{
 			last_max = max;

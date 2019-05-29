@@ -6,112 +6,86 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 10:20:09 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:39:58 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "parser.h"
 #include "reader.h"
 #include "lem_in.h"
+#include "mem.h"
 
-size_t	print_moves(struct s_anthil *anthil)
+static bool		is_special(struct s_anthil *anthil)
 {
-	bool	moving;
-	size_t	turn;
 	size_t	i;
-	size_t	j;
-	size_t	ants;
-	size_t	ants_offset;
 
-	turn = 1;
-	moving = true;
-	while (moving)
+	i = 0;
+	while (i < anthil->start->out.links->len)
 	{
-		moving = false;
-		i = 0;
-		ants_offset = 0;
-		while (i < anthil->paths->len)
-		{
-			ants = anthil->paths->paths[i].ants;
-			j = 0;
-			while (j < ants && j < turn)
-			{
-				if (turn - j >= anthil->paths->paths[i].path->len)
-				{
-					j++;
-					continue ;
-				}
-				if (moving)
-					printf(" ");
-				printf("L%zu-%s", ants_offset + j + 1, anthil->paths->paths[i].path->rooms[turn - j]->name);
-				moving = true;
-				j++;
-			}
-			ants_offset += ants;
-			i++;
-		}
-		if (moving)
-		{
-			printf("\n");
-			fflush(stdout);
-		}
-		turn++;
+		if (anthil->start->out.links->elems[i].ptr == &anthil->end->in)
+			return (true);
+		i++;
 	}
-	return (turn - 2);
+	return (false);
 }
 
-#define GENERATOR_COMMENT "Here is the number of lines required: "
-
-ssize_t	expected_turns(struct s_anthil *anthil)
+static ssize_t	handle_special(struct s_anthil *anthil)
 {
-	if (anthil->end_comments
-		&& strncmp(anthil->end_comments, GENERATOR_COMMENT, sizeof(GENERATOR_COMMENT) - 1) == 0)
+	size_t	i;
+
+	i = 0;
+	while (i < anthil->ants)
 	{
-		return (atoi(anthil->end_comments + sizeof(GENERATOR_COMMENT) - 1));
+		print_move(i + 1, anthil->end->name);
+		i++;
+		if (i < anthil->ants)
+			write(STDOUT_FILENO, " ", 1);
 	}
-	else
-		return (-1);
+	write(STDOUT_FILENO, "\n", 1);
+	return (1);
 }
 
-int	run(struct s_anthil *anthil)
+static ssize_t	handle_normal(struct s_anthil *anthil)
 {
-	if (!anthil->start)
-	{
-		error("No start link\n");
-		return (1);
-	}
-	if (!anthil->end)
-	{
-		error("No end link\n");
-		return (1);
-	}
-	if (anthil->start == anthil->end)
-	{
-		error("Start is end\n");
-		return (1);
-	}
 	find_all_paths(anthil);
 	if (!anthil->paths)
 	{
-		error("No paths found\n");
-		return (1);
+		write(STDERR_FILENO, ERROR_NO_PATH, sizeof(ERROR_NO_PATH) - 1);
+		return (-1);
 	}
 	print_anthil(anthil);
-	size_t turns = print_moves(anthil);
-	fprintf(stderr, "Turns: %zu, Expected: %zd\n", turns, expected_turns(anthil));
-	if (turns > expected_turns(anthil))
-	{
-		fprintf(stderr, "\33[31mMore than expected\n\33[0m");
-		return (1);
-	}
-	return (0);
+	return (print_moves(anthil));
 }
 
-int	main(void)
+static int		run(struct s_anthil *anthil, bool check)
+{
+	ssize_t	turns;
+
+	if (!anthil->start)
+		write(STDERR_FILENO, ERROR_NO_START, sizeof(ERROR_NO_START) - 1);
+	else if (!anthil->end)
+		write(STDERR_FILENO, ERROR_NO_END, sizeof(ERROR_NO_END) - 1);
+	else if (anthil->start == anthil->end)
+		write(STDERR_FILENO, ERROR_START_END, sizeof(ERROR_START_END) - 1);
+	else
+	{
+		if (is_special(anthil))
+			turns = handle_special(anthil);
+		else
+			turns = handle_normal(anthil);
+		if (turns == -1)
+			return (1);
+		else
+			return (check ? check_expected(anthil, turns) : 0);
+	}
+	return (1);
+}
+
+int				main(int argc, char *argv[])
 {
 	t_reader		r;
 	struct s_anthil	anthil;
-	int			ret;
+	int				ret;
 
 	r = io_create_reader(0);
 	anthil = (struct s_anthil) {
@@ -120,10 +94,9 @@ int	main(void)
 	if (!anthil.rooms)
 		return (1);
 	if (read_anthil(&r, &anthil))
-		ret = run(&anthil);
+		ret = run(&anthil, argc == 2 && ft_strcmp(argv[1], "--check") == 0);
 	else
 		ret = 1;
 	free_anthil(&anthil);
 	return (ret);
 }
-

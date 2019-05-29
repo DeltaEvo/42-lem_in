@@ -1,4 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2019/05/28 22:56:09 by dde-jesu          #+#    #+#             */
+/*   Updated: 2019/05/29 02:53:39 by dde-jesu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "lem_in.h"
+#include <stdlib.h>
 
 bool	ffree(void *ptr)
 {
@@ -20,7 +33,7 @@ void	free_links(struct s_link_vec *links)
 	free(links);
 }
 
-void	free_paths(struct s_path_vec *paths)
+void	*free_paths(struct s_path_vec *paths)
 {
 	size_t	i;
 
@@ -31,14 +44,17 @@ void	free_paths(struct s_path_vec *paths)
 		i++;
 	}
 	free(paths);
+	return (NULL);
 }
 
 bool	free_room(struct s_room *room)
 {
 	free(room->name);
 	free(room->comments);
-	free_links(room->in.links);
-	free_links(room->out.links);
+	if (room->in.links)
+		free_links(room->in.links);
+	if (room->out.links)
+		free_links(room->out.links);
 	free(room);
 	return (false);
 }

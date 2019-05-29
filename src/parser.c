@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:30:44 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 03:57:39 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,15 @@ char	*read_name(t_reader *r)
 	t_str	str;
 
 	if (!str_init(&str, 8))
-		return (NULL);
+		return (error_malloc(NULL));
 	while ((c = io_peek(r)) != -1 && !is_ws(c) && c != '-' && c != '\n')
 	{
 		if (!str_append(&str, c))
-			return (NULL);
+			return (error_malloc(str.inner));
 		r->index++;
 	}
-	str_append(&str, '\0');
+	if (!(str_append(&str, '\0')))
+		return (error_malloc(str.inner));
 	return (str.inner);
 }
 
@@ -56,91 +57,84 @@ char	*read_comments(t_reader *r)
 	int16_t	c;
 	t_str	str;
 
-	if (io_peek(r) == '#')
+	if (io_peek(r) != '#')
+		return (NULL);
+	if (!str_init(&str, 8))
+		return (error_malloc(NULL));
+	r->index++;
+	while ((c = io_peek(r)) != -1)
 	{
-		if (!str_init(&str, 8))
-			return (NULL);
+		if (!str_append(&str, c))
+			return (error_malloc(str.inner));
 		r->index++;
-		while ((c = io_peek(r)) != -1)
+		if (c == '\n')
 		{
-			if (!str_append(&str, c))
-				return ((void *)ffree(str.inner));
-			r->index++;
-			if (c == '\n')
-			{
-				if (io_peek(r) == '#')
-					r->index++;
-				else
-					break ;
-			}
+			if (io_peek(r) == '#')
+				r->index++;
+			else
+				break ;
 		}
-		str_append(&str, '\0');
-		return (str.inner);
 	}
-	return (NULL);
+	if (!(str_append(&str, '\0')))
+		return (error_malloc(str.inner));
+	return (str.inner);
 }
 
-void	init_and_read_room(t_reader *r, struct s_room *room, char *name)
+bool	init_and_read_room(t_reader *r, struct s_room *room, char *name)
 {
 	struct s_link		*link;
 
 	*room = (struct s_room) {
 		.name = name,
 		.in = {
-			.in = true,
-			.links = create_link_vec(1)
+			.in = true, .links = create_link_vec(1)
 		},
 		.out = {
-			.in = false,
-			.links = create_link_vec(1)
+			.in = false, .links = create_link_vec(1)
 		}
 	};
-	if ((link = add_link(&room->in.links)))
-	{
-		link->comments = NULL;
-		link->first = false;
-		link->virtual = true;
-		link->usable = true;
-		link->ptr = &room->out;
-	}
+	if (!room->in.links || !room->out.links
+			|| !(link = add_link(&room->in.links)))
+		return (false);
+	link->comments = NULL;
+	link->first = false;
+	link->virtual = true;
+	link->usable = true;
+	link->ptr = &room->out;
 	skip_ws(r);
 	io_readnum(r, &room->x);
 	skip_ws(r);
 	io_readnum(r, &room->y);
+	return (true);
 }
 
-bool	read_object(t_reader *r, struct s_room **room, struct s_link_names *link)
+bool	read_object(t_reader *r, struct s_room **room,
+		struct s_link_names *link)
 {
 	char			*name;
-	int16_t			c;
 
-	name = read_name(r);
-	if (is_ws(c = io_peek(r)))
+	if (!(name = read_name(r)))
+		return (false);
+	if (is_ws(io_peek(r)))
 	{
 		if (*name == 'L')
 		{
 			error("Room %s start with an illegal character: L\n", name);
-			free(name);
-			return (false);
+			return (ffree(name));
 		}
-		if (!(*room = malloc(sizeof(**room))))
-		{
-			free(name);
-			return (false);
-		}
-		init_and_read_room(r, *room, name);
+		if (!(*room = malloc(sizeof(**room)))
+				|| !init_and_read_room(r, *room, name))
+			return ((bool)error_malloc(name));
 	}
-	else if (c == '-')
+	else if (io_peek(r) == '-')
 	{
 		r->index++;
 		link->first = name;
-		link->second = read_name(r);
+		if (!(link->second = read_name(r)))
+			return (ffree(name));
 	}
 	else
-	{
-		free(name);
-		return (false);
-	}
+		return (ffree(name));
 	return (true);
 }
 
@@ -162,23 +156,21 @@ bool	link_anthil(struct s_hashtable *hashtable, struct s_link_names *links,
 	if (!first || !second)
 		return (true);
 	if (!(link = add_link(&((struct s_room *)first->value)->out.links)))
-		return (false);
-	link->ptr = &((struct s_room *)second->value)->in;
-	link->first = true;
-	link->virtual = false;
-	link->usable = true;
-	link->comments = comments;
+		return ((bool)error_malloc(NULL));
+	*link = (struct s_link) {
+		.ptr = &((struct s_room *)second->value)->in, .first = true,
+		.virtual = false, .usable = true, .comments = (char *)comments
+	};
 	if (!(link = add_link(&((struct s_room *)second->value)->out.links)))
-		return (false);
-	link->ptr = &((struct s_room *)first->value)->in;
-	link->first = false;
-	link->virtual = false;
-	link->usable = true;
-	link->comments = comments;
+		return ((bool)error_malloc(NULL));
+	*link = (struct s_link) {
+		.ptr = &((struct s_room *)first->value)->in, .first = false,
+		.virtual = false, .usable = true, .comments = (char *)comments
+	};
 	return (true);
 }
 
-bool	free_and_warn_unused(struct s_anthil *anthil, struct s_hashtable *hashtable)
+bool	free_and_warn_unused(struct s_hashtable *hashtable)
 {
 	size_t			i;
 	struct s_room	*room;
@@ -245,8 +237,7 @@ static bool		handle_room(struct s_hashtable **hashtable,
 	entry->value = room;
 	if (!(ptr = add_room(&anthil->rooms)))
 		return (free_room(room));
-	*ptr = room;
-	return (true);
+	return (!!(*ptr = room));
 }
 
 bool	read_anthil(t_reader *r, struct s_anthil *anthil)
@@ -261,21 +252,19 @@ bool	read_anthil(t_reader *r, struct s_anthil *anthil)
 		return (error("Invalid ant num\n") && false);
 	if (!(table = create_hashtable(10)))
 		return (false);
-	while (true)
+	while (!(room = NULL))
 	{
 		skip_nl(r);
 		anthil->end_comments = read_comments(r);
 		if (io_peek(r) == -1)
 			break ;
-		room = NULL;
-		if (!read_object(r, &room, &link))
-			return (ffree(table));
-		if (room && !handle_room(&table, anthil, room, &anthil->end_comments))
+		if (!read_object(r, &room, &link) || (room &&
+					!handle_room(&table, anthil, room, &anthil->end_comments)))
 			return (ffree(table));
 		if (!room && !link_anthil(table, &link, &anthil->end_comments))
 			return (error("Malloc\n") && ffree(table));
 		if (!io_expect(r, "\n"))
 			return (error("Too much data\n") && ffree(table));
 	}
-	return (free_and_warn_unused(anthil, table));
+	return (free_and_warn_unused(table));
 }

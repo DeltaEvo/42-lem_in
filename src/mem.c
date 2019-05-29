@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:14:49 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/27 11:43:58 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 03:57:51 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ void	*ft_realloc(void *o_ptr, size_t oldsize, size_t newsize)
 	void	*ptr;
 
 	if (!(ptr = malloc(newsize)))
-	{
-		free(o_ptr);
 		return (NULL);
-	}
 	if (oldsize)
 	{
 		ft_memcpy(ptr, o_ptr, oldsize);
@@ -72,14 +69,4 @@ char	*ft_strchr(const char *s, int c)
 		return (0);
 	else
 		return ((char *)s);
-}
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	len;
-
-	len = 0;
-	while (s[len])
-		len++;
-	return (len);
 }
