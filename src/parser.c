@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 06:09:01 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 06:16:25 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,8 +151,8 @@ bool			read_anthil(t_reader *r, struct s_anthil *anthil)
 		anthil->end_comments = read_comments(r);
 		if (io_peek(r) == -1)
 			break ;
-		if (!read_object(r, &room, &link) || (room &&
-					!handle_room(&table, anthil, room, &anthil->end_comments)))
+		if (!read_object(r, &room, &link) || (room && !handle_room(
+						&table, anthil, room, &anthil->end_comments)))
 			return (ffree(table));
 		if (!room && !link_anthil(table, &link, &anthil->end_comments, 0))
 			return (error_malloc(NULL) || ffree(table));
