@@ -6,15 +6,14 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/29 04:30:52 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 04:47:16 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 06:00:05 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include "mem.h"
-#include <unistd.h>
 
-void			putnbr_fd(int fd, intmax_t n)
+void				putnbr_fd(int fd, intmax_t n)
 {
 	char		buf[22];
 	intmax_t	i;
@@ -39,7 +38,7 @@ void			putnbr_fd(int fd, intmax_t n)
 static int32_t		print_moves_path(size_t turn, size_t ants_offset,
 		struct s_path *path, bool *moving)
 {
-	int32_t	ants;
+	size_t	ants;
 	size_t	j;
 
 	ants = path->ants;

@@ -6,15 +6,14 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/29 10:23:07 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 04:43:01 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 05:51:22 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lem_in.h"
 #include "mem.h"
-#include <unistd.h>
 
-void	print_comments(const char *comments)
+static void	print_comments(const char *comments)
 {
 	const char	*end;
 
@@ -32,27 +31,24 @@ void	print_comments(const char *comments)
 	}
 }
 
-void	print_room(struct s_room *room)
+static void	print_link(struct s_link *link, struct s_room *room)
 {
-	size_t	i;
-
-	room->mark = true;
-	print_comments(room->comments);
-	write(STDOUT_FILENO, room->name, ft_strlen(room->name));
-	write(STDOUT_FILENO, " ", 1);
-	putnbr_fd(STDOUT_FILENO, room->x);
-	write(STDOUT_FILENO, " ", 1);
-	putnbr_fd(STDOUT_FILENO, room->y);
-	i = 0;
-	while (i < room->out.links->len)
-	{
-		if (!get_room(room->out.links->elems[i].ptr)->mark)
-			print_room(get_room(room->out.links->elems[i].ptr));
-		i++;
-	}
+	print_comments(link->comments);
+	if (link->first)
+		write(STDOUT_FILENO, room->name, ft_strlen(room->name));
+	else
+		write(STDOUT_FILENO, get_room(link->ptr)->name,
+				ft_strlen(get_room(link->ptr)->name));
+	write(STDOUT_FILENO, "-", 1);
+	if (link->first)
+		write(STDOUT_FILENO, get_room(link->ptr)->name,
+				ft_strlen(get_room(link->ptr)->name));
+	else
+		write(STDOUT_FILENO, room->name, ft_strlen(room->name));
+	write(STDOUT_FILENO, "\n", 1);
 }
 
-void	print_links(struct s_room *room)
+static void	print_links(struct s_room *room)
 {
 	size_t	i;
 
@@ -60,20 +56,9 @@ void	print_links(struct s_room *room)
 	i = 0;
 	while (i < room->out.links->len)
 	{
-		if (!room->out.links->elems[i].virtual && !get_room(room->out.links->elems[i].ptr)->mark)
-		{
-			print_comments(room->out.links->elems[i].comments);
-			if (room->out.links->elems[i].first)
-				write(STDOUT_FILENO, room->name, ft_strlen(room->name));
-			else
-				write(STDOUT_FILENO, get_room(room->out.links->elems[i].ptr)->name, ft_strlen(get_room(room->out.links->elems[i].ptr)->name));
-			write(STDOUT_FILENO, "-", 1);
-			if (room->out.links->elems[i].first)
-				write(STDOUT_FILENO, get_room(room->out.links->elems[i].ptr)->name, ft_strlen(get_room(room->out.links->elems[i].ptr)->name));
-			else
-				write(STDOUT_FILENO, room->name, ft_strlen(room->name));
-			write(STDOUT_FILENO, "\n", 1);
-		}
+		if (!room->out.links->elems[i].virtual
+				&& !get_room(room->out.links->elems[i].ptr)->mark)
+			print_link(room->out.links->elems + i, room);
 		i++;
 	}
 	i = 0;
@@ -85,11 +70,26 @@ void	print_links(struct s_room *room)
 	}
 }
 
-void	print_anthil(struct s_anthil *anthil)
+void		print_anthil(struct s_anthil *anthil)
 {
+	size_t	i;
+
 	print_comments(anthil->start_comments);
 	putnbr_fd(STDOUT_FILENO, anthil->ants);
-	print_room(anthil->start);
+	write(STDOUT_FILENO, "\n", 1);
+	i = 0;
+	while (i < anthil->rooms->len)
+	{
+		print_comments(anthil->rooms->rooms[i]->comments);
+		write(STDOUT_FILENO, anthil->rooms->rooms[i]->name,
+				ft_strlen(anthil->rooms->rooms[i]->name));
+		write(STDOUT_FILENO, " ", 1);
+		putnbr_fd(STDOUT_FILENO, anthil->rooms->rooms[i]->x);
+		write(STDOUT_FILENO, " ", 1);
+		putnbr_fd(STDOUT_FILENO, anthil->rooms->rooms[i]->y);
+		write(STDOUT_FILENO, "\n", 1);
+		i++;
+	}
 	unmark(anthil->start);
 	print_links(anthil->start);
 	unmark(anthil->start);

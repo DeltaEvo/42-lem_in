@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/28 16:37:29 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 04:26:09 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 04:59:17 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,21 +15,7 @@
 #include <stdlib.h>
 #include <limits.h>
 
-struct s_link		*get_link(struct s_node *from, struct s_node *to)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < from->links->len)
-	{
-		if (from->links->elems[i].ptr == to)
-			return (&from->links->elems[i]);
-		i++;
-	}
-	return (NULL);
-}
-
-bool	find_path(struct s_anthil *anthil)
+static bool					find_path(struct s_anthil *anthil)
 {
 	struct s_queue	*queue;
 	struct s_node	**entry;
@@ -58,8 +44,8 @@ bool	find_path(struct s_anthil *anthil)
 	return (anthil->end->in.prev != NULL);
 }
 
-bool	collect_path(struct s_anthil *anthil, struct s_room_vec **vec,
-		struct s_node *node)
+static bool					collect_path(struct s_anthil *anthil,
+		struct s_room_vec **vec, struct s_node *node)
 {
 	size_t			i;
 	struct s_room	**room;
@@ -88,28 +74,8 @@ bool	collect_path(struct s_anthil *anthil, struct s_room_vec **vec,
 	return (true);
 }
 
-size_t	get_shortest_path(struct s_path_vec *paths)
-{
-	size_t	i;
-	size_t	min;
-	size_t	min_val;
-
-	i = 0;
-	min = 0;
-	min_val = paths->paths[0].path->len;
-	while (i < paths->len)
-	{
-		if (paths->paths[i].path->len < min_val)
-		{
-			min = i;
-			min_val = paths->paths[i].path->len;
-		}
-		i++;
-	}
-	return (min);
-}
-
-size_t	distribute_ants(struct s_anthil *anthil, struct s_path_vec *paths)
+static size_t				distribute_ants(struct s_anthil *anthil,
+		struct s_path_vec *paths)
 {
 	size_t	i;
 	int32_t	diff;
@@ -135,33 +101,7 @@ size_t	distribute_ants(struct s_anthil *anthil, struct s_path_vec *paths)
 	return (paths->paths[min].ants + paths->paths[min].path->len - 2);
 }
 
-static void	toggle_usability(struct s_anthil *anthil)
-{
-	struct s_link		*link;
-	struct s_node		*node;
-
-	node = &anthil->end->in;
-	while (node != &anthil->start->in)
-	{
-		get_link(node->prev, node)->usable = false;
-		if ((link = get_link(node, node->prev)))
-			link->usable = true;
-		else
-		{
-			if ((link = add_link(&node->links)))
-			{
-				link->ptr = node->prev;
-				link->first = false;
-				link->comments = NULL;
-				link->virtual = true;
-				link->usable = true;
-			}
-		}
-		node = node->prev;
-	}
-}
-
-struct s_path_vec	*get_paths(struct s_anthil *anthil)
+static struct s_path_vec	*get_paths(struct s_anthil *anthil)
 {
 	struct s_path_vec	*paths;
 	struct s_path		*path;
@@ -190,7 +130,7 @@ struct s_path_vec	*get_paths(struct s_anthil *anthil)
 	return (paths);
 }
 
-void	find_all_paths(struct s_anthil *anthil)
+void						find_all_paths(struct s_anthil *anthil)
 {
 	struct s_path_vec	*paths;
 	size_t				last_max;

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 04:39:58 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/29 05:59:48 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static bool		is_special(struct s_anthil *anthil)
 
 static ssize_t	handle_special(struct s_anthil *anthil)
 {
-	size_t	i;
+	int32_t	i;
 
 	i = 0;
 	while (i < anthil->ants)
