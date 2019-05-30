@@ -24,8 +24,8 @@ function readStdin() {
     const chunks = [];
     process.stdin.setEncoding("utf8");
     process.stdin.on("data", chunk => chunks.push(chunk));
-    process.stdin.on("error", reject);
-    process.stdin.on("end", () => resolve(chunks.join("")));
+    process.stdin.once("error", reject);
+    process.stdin.once("end", () => resolve(chunks.join("")));
   });
 }
 

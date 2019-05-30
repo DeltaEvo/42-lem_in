@@ -1,0 +1,8 @@
+{
+  "name": "@lemin/tools",
+  "version": "1.0.0",
+  "license": "MIT",
+  "dependencies": {
+    "prompts": "^2.1.0"
+  }
+}
