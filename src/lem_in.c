@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:28:35 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 05:59:48 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/30 18:06:16 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ static ssize_t	handle_special(struct s_anthil *anthil)
 {
 	int32_t	i;
 
+	print_anthil(anthil);
 	i = 0;
 	while (i < anthil->ants)
 	{
