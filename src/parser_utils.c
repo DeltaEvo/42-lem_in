@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/29 05:53:57 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 05:55:52 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/31 09:59:43 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ char	*read_comments(t_reader *r)
 		r->index++;
 		if (c == '\n')
 		{
+			skip_nl(r);
 			if (io_peek(r) == '#')
 				r->index++;
 			else

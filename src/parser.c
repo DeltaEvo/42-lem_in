@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 08:57:12 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 06:16:25 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/31 09:58:36 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,10 +54,7 @@ static bool		read_object(t_reader *r, struct s_room **room,
 	if (io_peek(r) == ' ' || io_peek(r) == '\t')
 	{
 		if (*name == 'L')
-		{
-			error_illegal(name);
-			return (ffree(name));
-		}
+			return (error_illegal(name, 'L') && ffree(name));
 		if (!(*room = malloc(sizeof(**room)))
 				|| !init_and_read_room(r, *room, name))
 			return ((bool)error_malloc(name));
@@ -70,7 +67,7 @@ static bool		read_object(t_reader *r, struct s_room **room,
 			return (ffree(name));
 	}
 	else
-		return (ffree(name));
+		return (error_illegal(name, io_peek(r)) && ffree(name));
 	return (true);
 }
 

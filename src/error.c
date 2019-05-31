@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/29 01:58:31 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 05:24:45 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/31 09:57:39 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,12 @@ bool	error_duplicate(char *name)
 	return (true);
 }
 
-bool	error_illegal(char *name)
+bool	error_illegal(char *name, char c)
 {
 	write(STDERR_FILENO, ERROR_ILLEGAL_PRE, sizeof(ERROR_ILLEGAL_PRE) - 1);
 	write(STDERR_FILENO, name, ft_strlen(name));
 	write(STDERR_FILENO, ERROR_ILLEGAL_POST, sizeof(ERROR_ILLEGAL_POST) - 1);
+	write(STDERR_FILENO, &c, 1);
+	write(STDERR_FILENO, "\n", 1);
 	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: dde-jesu <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/03/20 09:03:08 by dde-jesu          #+#    #+#             */
-/*   Updated: 2019/05/29 06:08:34 by dde-jesu         ###   ########.fr       */
+/*   Updated: 2019/05/31 09:57:46 by dde-jesu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@
 # define ERROR_INVALID_ANTS ERROR "Invalid Ants num\n"
 # define ERROR_DUPLICATE ERROR "Duplicate room \""
 # define ERROR_ILLEGAL_PRE ERROR "Room \""
-# define ERROR_ILLEGAL_POST "\" start with an illegal character: L\n"
+# define ERROR_ILLEGAL_POST "\" start with an illegal character: "
 
 # define WARN_NOT_FOUND_PRE WARNING "Room \""
 # define WARN_NOT_FOUND_POST " not found\n"
@@ -137,7 +137,7 @@ void				*error_malloc(void *ptr);
 bool				error_too_much_data(void);
 bool				error_invalid_ants(void);
 bool				error_duplicate(char *name);
-bool				error_illegal(char *name);
+bool				error_illegal(char *name, char c);
 void				warning_not_found(bool first, char *name);
 void				warning_redefined(bool start, char *new, char *old);
 
